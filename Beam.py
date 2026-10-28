@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 import numpy as np
 import scipy
 import stim

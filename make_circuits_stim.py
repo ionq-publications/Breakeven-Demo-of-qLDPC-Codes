@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 # =========================================================== #
 # Scripts to construct generic circuit directly from matrices #
 # =========================================================== #

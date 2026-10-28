@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 import numpy as np
 import compilescripts as comp
 

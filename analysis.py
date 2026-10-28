@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 import numpy as np
 from pickle import load, dump
 import csv

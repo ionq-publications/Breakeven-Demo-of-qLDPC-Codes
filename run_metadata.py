@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 import os
 from datetime import datetime
 from bson.objectid import ObjectId

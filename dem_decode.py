@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 import analysis
 # import make_circuits_stim
 from stim import Circuit

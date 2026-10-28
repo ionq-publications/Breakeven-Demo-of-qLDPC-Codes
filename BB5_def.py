@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 # ======================== #
 # Definitions for BB5 code #
 # ======================== #

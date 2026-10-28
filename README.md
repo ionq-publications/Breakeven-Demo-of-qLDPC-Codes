@@ -1,6 +1,9 @@
 # Breakeven Demonstration of qLDPC Codes
 This is a companion repository for the paper "Breakeven demonstration of quantum low-density parity-check codes" (arXiv:2606.06455).
 
+# License
+The content in this repository is copyright IonQ Inc., all rights reserved. It is licensed under the [CC BY-NC-SA 4.0 license](LICENSE.md).
+
 # Basic Usage
 Decoding of experimental data is shown in "Analyze_Data.ipynb".
 Pre-computed, aggregated decoding outcomes are saved in "processed_data/".

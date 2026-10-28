@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 import pathlib
 from typing import Dict
 

@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 import re
 from collections import defaultdict
 

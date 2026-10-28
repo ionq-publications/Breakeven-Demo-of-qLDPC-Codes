@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 # Generate stim circuit with sequence and structure to match ore #
 
 import stim

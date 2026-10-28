@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 import json
 import qiskit.circuit as qkc
 

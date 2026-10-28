@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 from qiskit import circuit as qkc
 import stim
 import compilescripts as comp

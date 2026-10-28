@@ -1,3 +1,4 @@
+# Copyright IonQ Inc., all rights reserved
 import analysis
 from concurrent.futures import ProcessPoolExecutor
 import dem_decode
