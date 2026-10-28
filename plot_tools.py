@@ -404,20 +404,6 @@ def print_lifetime_latex(lifetimes):
     print(f"& ${s_Tx}$ & ${s_Tz}$ & ${s_Tr}$ \\tabularnewline \n")
 
 
-# >>>>> Various sim plots
-
-handle = open('sim_results.pkl', 'rb')
-simdat = load(handle)
-handle.close()
-del handle
-
-handle = open('sim_results_erasureconv.pkl', 'rb')
-simdat_ec = load(handle)
-handle.close()
-del handle
-
-from BB5GB4_fitted_plog import fitted_plog_per_round as fplog
-
 def get_ticks(maj0, maj1, skip=0, prune=0):
     tcks = []
     lbls = []
@@ -458,64 +444,3 @@ def get_ticks_custom(maj0, maj1, skip=0, prune=0):
         tcks = tcks[skip:prune]
 
     return lbls, tcks
-
-def get_sim_plots():
-    fig = plt.figure()
-    ax0 = fig.add_subplot(111)
-
-    colors = {"GB4final_d4":'blue', "GB4final_d5":'red'}
-    bands = {}
-    for key in simdat:
-        if not "GB4final" in key: continue
-        val = simdat[key]
-        err = val['errors'] / val['shots'] / 6
-        x = np.log10(val['scales'])
-        y = np.log10(err)
-        bands[key] = (x, y)
-        line = {True:'--', False:'dotted'}['X' in key]
-        ax0.plot(x, y, color=colors[key[0:-5]], linestyle=line)
-
-    for key in simdat_ec:
-        if not "GB4final" in key: continue
-        val = simdat_ec[key]
-        err = val['errors'] / val['shots'] / 6
-        x = np.log10(val['scales'])
-        y = np.log10(err)
-        if key in bands:
-            bx, by = bands[key]
-            ax0.fill_between(bx, by, np.interp(bx, x, y), color=colors[key[0:-5]], alpha=0.15)
-
-    for b in ["X", "Z"]:
-        for d in [4,5]:
-            codeid = {4:'[[16, 2, 4]]', 5:'[[26, 2, 5]]'}
-            lbl = f"{codeid[d]}, {b}"
-            c = colors[f"GB4final_d{d}"]
-            line = {True:'--', False:'dotted'}['X'==b]
-            mark = {True:'o', False:'s'}['X'==b]
-            row = fplog["GB4"][b][d-4]
-            µ = row[2]/6
-            lo, hi = (µ-row[0]/6, µ+row[1]/6)
-            ebar = [[np.log10(µ)-np.log10(lo)],[np.log10(hi)-np.log10(µ)]]
-            ax0.errorbar([0], [np.log10(µ)], ebar, marker=mark, linestyle=line, color=c, label=lbl, capsize=2)
-
-    xlabs, xvals = get_ticks_custom(-1, 1, 0, 0)
-    ax0.set_xticks(xvals, labels=xlabs)
-    ax0.set_xlim(np.log10(0.3), np.log10(1.4))
-    ylabs, yvals = get_ticks(-4, -1, 0, 0)
-    ax0.set_yticks(yvals, labels=ylabs)
-    ax0.set_ylim(np.log10(1e-3), np.log10(6e-2))
-
-    ax0.set_title("Extrapolated logical performance (GB4)")
-    ax0.set_xlabel("Noise Multiplier")
-    ax0.set_ylabel("Logical error per round")
-
-    ax0.legend()
-
-    ax0.grid(which='both')
-
-    ax1 = ax0.twinx()
-    ax1.set_ylim(ax0.get_ylim())
-    ax1.set_yticks([-2.0021696628506853, -1.0215337831383124], labels=[100, 10])
-    ax1.set_ylabel("Logical qubit lifetime (# SEC)")
-
-    return fig, ax0

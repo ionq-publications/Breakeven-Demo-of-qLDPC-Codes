@@ -6,6 +6,7 @@ from compilescripts import read_from_file
 import make_stim_from_ore as o2s
 import numpy as np
 import stimbposd
+from beamsearch import BeamSearch
 from Beam import myBPListV3
 import pymatching
 
@@ -26,24 +27,26 @@ default_bposd_kwargs = {
     "osd_method":"osd_cs"
 }
 
-default_bplist_kwargs = { # Beam32 preset
+default_beam_kwargs = { # Beam32 preset
+    'max_rounds':10,
+    "beam_width":32,
+    "initial_iters":40,
+    "iters_per_round":30
+}
+
+default_bplist_internal_kwargs = { # Beam32 internal (BpListV3) preset
     'max_rounds':10,
     "list_size":32,
     "initial_iters":40,
     "iters_per_round":30
 }
 
-# default_bplist_kwargs = { # Beam64 preset
-#     'max_rounds':20,
-#     "list_size":64,
-#     "initial_iters":40,
-#     "iters_per_round":30
-# }
-
-def decoder_constructor(dem, decname='beam', kwargs=default_bplist_kwargs):
+def decoder_constructor(dem, decname='beam', kwargs=default_beam_kwargs):
     if decname=='bposd':
         dec = stimbposd.BPOSD(dem, **kwargs)
     elif decname=='beam':
+        dec = BeamSearch(dem, **kwargs)
+    elif decname=='beam_internal':
         dec = myBPListV3(dem, **kwargs)
     elif decname=='pymatching':
         dec = pymatching.Matching.from_detector_error_model(dem)
@@ -57,7 +60,7 @@ def init_decoder(orename, Hx, Hz, L, rounds, basis, n_phy_anc, mode, noise, decn
     circ = o2s.ore_to_stim_full(ore, n_phy_anc, H, L, rounds, basis, mode, noise)
     dem = circ.detector_error_model()
 
-    dec_kwargs = {'beam':default_bplist_kwargs, 'bposd':default_bposd_kwargs}[decname]
+    dec_kwargs = {'beam':default_beam_kwargs, 'beam_internal':default_bplist_internal_kwargs, 'bposd':default_bposd_kwargs}[decname]
     dec = decoder_constructor(dem, decname=decname, kwargs=dec_kwargs)
 
     return dec, circ

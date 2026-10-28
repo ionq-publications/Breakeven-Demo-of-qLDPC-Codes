@@ -4,12 +4,12 @@ from typing import Dict
 
 import numpy as np
 import stim
-from Beam import myBPListV3
+from beamsearch import BeamSearch
 from sinter import CompiledDecoder, Decoder
 
 
-class SinterCompiledDecoder_myBPListV3(CompiledDecoder):
-    def __init__(self, decoder: "myBPListV3"):
+class SinterCompiledDecoder_BeamSearch(CompiledDecoder):
+    def __init__(self, decoder: "BeamSearch"):
         self.decoder = decoder
 
     def decode_shots_bit_packed(
@@ -24,11 +24,12 @@ class SinterCompiledDecoder_myBPListV3(CompiledDecoder):
         )
 
 
-class SinterDecoder_myBPListV3(Decoder):
+class SinterDecoder_BeamSearch(Decoder):
     def __init__(
         self,
         max_rounds: int = 10,
-        list_size: int = 8,
+        beam_width: int = 8,
+        num_results: int = 1,
         initial_iters: int = 30,
         iters_per_round: int = 20,
         **bp_kwargs,
@@ -46,21 +47,23 @@ class SinterDecoder_myBPListV3(Decoder):
             The maximum number of iterations of belief propagation to be used, by default 30
         """
         self.max_rounds = max_rounds
-        self.list_size = list_size
+        self.beam_width = beam_width
+        self.num_results = num_results
         self.initial_iters = initial_iters
         self.iters_per_round = iters_per_round
         self.bp_kwargs = bp_kwargs
 
     def compile_decoder_for_dem(self, *, dem: stim.DetectorErrorModel) -> CompiledDecoder:
-        bplistv3 = myBPListV3(
+        beamsearch = BeamSearch(
             model=dem,
             max_rounds=self.max_rounds,
-            list_size=self.list_size,
+            beam_width=self.beam_width,
+            num_results=self.num_results,
             initial_iters=self.initial_iters,
             iters_per_round=self.iters_per_round,
             **self.bp_kwargs,
         )
-        return SinterCompiledDecoder_myBPListV3(bplistv3)
+        return SinterCompiledDecoder_BeamSearch(beamsearch)
 
     def decode_via_files(
         self,
@@ -103,10 +106,11 @@ class SinterDecoder_myBPListV3(Decoder):
                 via sinter deleting this directory after killing the decoder.
         """
         dem = stim.DetectorErrorModel.from_file(dem_path)
-        bplistv3 = myBPListV3(
+        beamsearch = BeamSearch(
             model=dem,
             max_rounds=self.max_rounds,
-            list_size=self.list_size,
+            beam_width=self.beam_width,
+            num_results=self.num_results,
             initial_iters=self.initial_iters,
             iters_per_round=self.iters_per_round,
             **self.bp_kwargs,
@@ -117,7 +121,7 @@ class SinterDecoder_myBPListV3(Decoder):
             num_detectors=dem.num_detectors,
             bit_packed=False,
         )
-        predictions = bplistv3.decode_batch(shots)
+        predictions = beamsearch.decode_batch(shots)
         stim.write_shot_data_file(
             data=predictions,
             path=obs_predictions_b8_out_path,
@@ -127,4 +131,4 @@ class SinterDecoder_myBPListV3(Decoder):
 
 
 def sinter_decoders() -> Dict[str, Decoder]:
-    return {"mybplistv3": SinterDecoder_myBPListV3()}
+    return {"beamsearch": SinterDecoder_BeamSearch()}
